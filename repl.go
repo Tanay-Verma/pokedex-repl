@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/Tanay-Verma/pokedex-repl/internal/pokeapi"
 )
@@ -20,7 +21,16 @@ func startRepl(cfg *config) {
 		fmt.Print("Pokedex > ")
 
 		scanner.Scan()
-		cmd := scanner.Text()
+		cmdInput := strings.Fields(scanner.Text())
+		if len(cmdInput) == 0 {
+			continue
+		}
+
+		cmd := cmdInput[0]
+		args := []string{}
+		if len(cmdInput) > 1 {
+			args = cmdInput[1:]
+		}
 
 		command := getCommands()
 		v, ok := command[cmd]
@@ -29,7 +39,7 @@ func startRepl(cfg *config) {
 			continue
 		}
 
-		if err := v.callback(cfg); err != nil {
+		if err := v.callback(cfg, args...); err != nil {
 			fmt.Printf("Error: %v\n", err)
 		}
 	}
