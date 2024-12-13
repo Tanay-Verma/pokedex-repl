@@ -12,6 +12,7 @@ import (
 type config struct {
 	nextLocationAreasURL *string
 	prevLocationAreasURL *string
+	pokedex              map[string]pokeapi.Pokemon
 	pokeapiClient        pokeapi.Client
 }
 
@@ -21,7 +22,7 @@ func startRepl(cfg *config) {
 		fmt.Print("Pokedex > ")
 
 		scanner.Scan()
-		cmdInput := strings.Fields(scanner.Text())
+		cmdInput := cleanInput(scanner.Text())
 		if len(cmdInput) == 0 {
 			continue
 		}
@@ -43,4 +44,10 @@ func startRepl(cfg *config) {
 			fmt.Printf("Error: %v\n", err)
 		}
 	}
+}
+
+func cleanInput(text string) []string {
+	output := strings.ToLower(text)
+	words := strings.Fields(output)
+	return words
 }
